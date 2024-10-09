@@ -1,10 +1,11 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  mode:'jit',
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './src/**/*.{js,ts,jsx,tsx}',  // Asegúrate de que todos los archivos dentro de src sean observados
+    './src/components/**/*.{js,ts,jsx,tsx}',  // Apunta a la carpeta donde están tus componentes
+    './src/app/**/*.{js,ts,jsx,tsx}', 
   ],
   theme: {
     extend: {
