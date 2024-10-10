@@ -48,8 +48,11 @@ export default function LoginPage() {
                     <h1 className="text-center text-2xl font-bold mb-2">Bienvenido a JET</h1>
                     <p className="text-center text-gray-500 mb-5">Please sign-in to your account</p>
                     <form className="flex flex-col" action="" onSubmit={login}>
-                        <TextField name="email" value={email} onChange={onChangeForm} className="my-2"  variant="standard" placeholder="micorre@gmail.com" label="email" type="email"/>
-                        <TextField name="password" value={password} onChange={onChangeForm} className="my-2" variant="standard" placeholder="****" label="password" 
+                        <TextField sx={{marginY: '8px'}} name="email" value={email} onChange={onChangeForm} variant="standard" placeholder="micorre@gmail.com" label="email" type="email"/>
+                        <TextField name="password" value={password} onChange={onChangeForm} variant="standard" placeholder="****" label="password"
+                            sx={{
+                                marginY: '8px'
+                            }} 
                             type={showPassword ? 'text' : 'password'}
                             slotProps={{
                                 input:{
@@ -65,7 +68,7 @@ export default function LoginPage() {
                                 }
                             }}
                         />
-                        <Button type="submit" className="mt-10 mb-5" variant="contained">Login</Button>
+                        <Button type="submit" sx={{marginTop:'40px', marginBottom:'20px'}} variant="contained">Login</Button>
                     </form>
                 </div>
             </div>

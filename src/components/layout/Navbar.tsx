@@ -20,7 +20,7 @@ export const Navbar = () => {
     { id: "nav-2", icon: <ConfirmationNumberIcon />, title: 'Wishlists', path: '/' },
     { id: "nav-3", icon: <PeopleAltIcon />, title: 'Notification', path: '/' },
     { id: "nav-4", icon: <AssessmentIcon />, title: 'Profile', path: '/' },
-    { id: "nav-4", icon: <QrCodeIcon />, title: 'Profile', path: '/' },
+    { id: "nav-4", icon: <QrCodeIcon />, title: 'Profile', path: '/qr' },
 ];
   
   return (
