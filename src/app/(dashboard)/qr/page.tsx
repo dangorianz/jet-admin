@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
+
+  const [qrData, setQrData] = useState('')
 
   useEffect(() => {
     if (qrCodeRegionRef.current) {
@@ -18,7 +20,8 @@ export default function QrScann() {
       qrCodeScanner.render(
         (decodedText: string, decodedResult: any) => {
           console.log(`Código QR escaneado: ${decodedText}`);
-          alert(decodedText)
+          console.log(`Código decodedResult escaneado: ${decodedResult}`);
+          setQrData(decodedText)
         },
         (error: any) => {
           console.warn(`Error de escaneo: ${error}`);
@@ -31,5 +34,10 @@ export default function QrScann() {
     }
   }, []);
 
-  return <div className='h-screen w-full' id="qr-reader" ref={qrCodeRegionRef}></div>;
+  return (
+    <div className='w-full max-h-screen'>
+        <div id="qr-reader" ref={qrCodeRegionRef}></div>
+        <div>{qrData}</div>
+    </div>
+);
 };
