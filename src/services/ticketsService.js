@@ -1,6 +1,7 @@
-import { addDoc, collection, doc, getDoc, getDocs, query } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
 import { db } from "../config/firebase/firebaseConfig"
+import moment from "moment";
 
 export const createTicketService = async (payload, user) => {
     // 4SCg8Y2PMduCn3qlXaY9
@@ -20,7 +21,7 @@ export const createTicketService = async (payload, user) => {
         },
         sector: payload.sector,
         estado:'activo',
-        createAt: new Date()
+        createAt: moment().format('DD/MM/YYYY hh:mm:ss')
     }
     try {
         const docRef = await addDoc(collection(db, 'entradas'), body)
@@ -42,6 +43,18 @@ export const getTickesService = async () => {
     } catch (error) {
         console.error('Error al obtener los documentos: ', error);
         return { events: [] }
+    }
+}
+export const getTickesServiceByEvent = async (id) => {
+    try {
+        const ticketsRef = collection(db, 'entradas');
+        const q = query( ticketsRef , where("evento", "==", id))
+        const snapshot = await getDocs(q)
+        const dataEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        return { tickets: dataEvents };
+    } catch (error) {
+        console.error('Error al obtener los documentos: ', error);
+        return { tickets: [] }
     }
 }
 

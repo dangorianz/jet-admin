@@ -1,11 +1,12 @@
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
 
 import { db } from "../config/firebase/firebaseConfig"
+import moment from "moment";
 
 export const createEventService = async (payload, user) => {
 
     const body = {
-        date: payload.date,
+        date: moment(payload.date).format('DD/MM/YYYY'),
         name: payload.name,
         sectores: {
             general: payload.general,
@@ -18,7 +19,7 @@ export const createEventService = async (payload, user) => {
             nombre: user?.displayName || '',
             email: user?.email,
         },
-        createAt: new Date(),
+        createAt: moment().format('DD/MM/YYYY hh:mm:ss')
     }
     try {
         const docRef = await addDoc(collection(db, 'eventos'), body)

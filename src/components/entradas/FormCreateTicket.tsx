@@ -10,15 +10,14 @@ import Swal from 'sweetalert2'
 import { useUser } from '@/context/UserContext'
 import { useRouter } from 'next/navigation'
 
-export const FormCreateTicket = () => {
+export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getTicketByEvent}: any) => {
     const { user } = useUser();
     const router = useRouter();
     const [eventList, setEventList] = useState<any>([])
-    const [eventSelected, setEventSelected] = useState<any>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [ticketPrice, setTicketPrice] = useState(0)
     const [formCreateTicket, setFormCreateTicket] = useState({
-        evento: '',
+        evento: eventSelected.id,
         nombre: '',
         edad: 0,
         telefono: 0,
@@ -47,17 +46,6 @@ export const FormCreateTicket = () => {
         }
     }, [eventSelected, sector])
 
-    const onChangeEvent = ( _e: any, value: any) => {
-        if (_.isNull(value)) {
-            setEventSelected(null);
-        } else{
-            setEventSelected(value);
-        }
-        setFormCreateTicket({
-            ...formCreateTicket,
-            evento: value?.id || ''
-        })
-    }
     const onChangeFormTickets = (e: any) => {
         setFormCreateTicket({
             ...formCreateTicket,
@@ -70,6 +58,7 @@ export const FormCreateTicket = () => {
         setIsLoading(true)
         const resp = await createTicketService({...formCreateTicket, precio: ticketPrice}, user)
         if (resp.ok) {
+            setIsOpenCreateTicketForm(false)
             await Swal.fire({
                 icon:'success',
                 title: 'Entrada creada correctamente',
@@ -77,8 +66,11 @@ export const FormCreateTicket = () => {
                 timer: 1500
             })
             setIsLoading(false)
-            router.push(`/entradas/${resp.ticketId}`)
+            getTicketByEvent()
+            // router.push(`/entradas/${resp.ticketId}`)
         }
+        setIsOpenCreateTicketForm(false)
+        setIsLoading(false)
 
     }
     
@@ -86,12 +78,11 @@ export const FormCreateTicket = () => {
     
   return (
     <FormControl fullWidth>
-        <p className='text-center font-bold text-3xl'> Entradas</p>
-        <small className='text-center'>Formulario para crear entradas para los clientes de forma individual</small>
+        <p className='text-center font-bold text-3xl'> Creacion de entradas</p>
+        <small className='text-center mt-1'>Formulario para crear entradas para los clientes de forma individual</small>
         <br />
         <FormGroup>
-            <h3 className='font-medium mb-2'>Evento</h3>
-            <Autocomplete onChange={onChangeEvent} disablePortal options={eventList} renderInput={(params) => <TextField name='evento' {...params} label="Eventos" />}/>
+            <p className='text-amber-800 text-center font-bold text-2xl'>{eventSelected?.name}</p>
         </FormGroup>
         {
             !_.isEmpty(evento) &&
@@ -134,7 +125,7 @@ export const FormCreateTicket = () => {
                         <FormControlLabel value="supervip" control={<Radio />} label="Super VIP" />
                     </RadioGroup>
                 </div>
-                <p className='text-end text-2xl font-bold mt-5'>Price: <span className='font-normal'>{ticketPrice} Bs.</span></p>
+                <p className='text-end text-2xl font-bold mt-5'>Precio: <span className='font-normal ml-5'>{ticketPrice} Bs.</span></p>
                 <Divider/>
                 <br />
                 <FormGroup>
