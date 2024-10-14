@@ -116,7 +116,7 @@ export default function QrScann() {
   return (
     <>
       <div className='w-full max-h-screen'>
-        <div className='flex justify-center py-6 font-bold'>
+        <div className='flex justify-center py-6 px-8 w-fit font-bold flex-col'>
           {!cameraStarted ? (
             <>
               <FormControl fullWidth>
