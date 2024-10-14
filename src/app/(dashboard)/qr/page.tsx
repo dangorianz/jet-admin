@@ -79,7 +79,7 @@ export default function QrScann() {
         qrCodeScanner.clear(); 
       };
     }
-  }, []);  // Dependencia de isProcessing para que solo permita escanear cuando está desbloqueado
+  }, [isProcessing]);  // Dependencia de isProcessing para que solo permita escanear cuando está desbloqueado
 
 
   return (
