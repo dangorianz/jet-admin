@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useEffect, useRef, useState } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import Swal from 'sweetalert2';
 import { updateTicket } from '@/services/ticketsService';
 import { Backdrop, Button, CircularProgress } from '@mui/material';
 
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
-  const qrCodeScannerRef = useRef<any>(null); // Almacenar la referencia del escáner
+  const html5QrCodeRef = useRef<any>(null); // Almacenar la referencia del escáner
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -50,7 +50,7 @@ export default function QrScann() {
       });
     } finally {
       setIsProcessing(false);
-      qrCodeScannerRef.current?.resume();  // Reanudar el escaneo
+      html5QrCodeRef.current?.resume();  // Reanudar el escaneo
     }
   };
 
@@ -60,19 +60,21 @@ export default function QrScann() {
 
   useEffect(() => {
     if (qrCodeRegionRef.current) {
-      const qrCodeScanner = new Html5QrcodeScanner(
-        'qr-reader', 
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        false
-      );
+      const html5QrCode = new Html5Qrcode("qr-reader");
 
-      qrCodeScannerRef.current = qrCodeScanner;  // Guardar el escáner en la referencia
+      html5QrCodeRef.current = html5QrCode;  // Guardar la referencia
 
-      qrCodeScanner.render(
-        async (decodedText: string, decodedResult: any) => {
+      // Iniciar la cámara y el escaneo de QR
+      html5QrCode.start(
+        { facingMode: "environment" }, // Usar la cámara trasera
+        {
+          fps: 10,    // Fotogramas por segundo
+          qrbox: { width: 250, height: 250 }  // Área de escaneo
+        },
+        async (decodedText: string) => {
           if (!isProcessing) {
             setIsProcessing(true);
-            qrCodeScanner.pause();  // Pausar el escaneo temporalmente
+            html5QrCode.pause();  // Pausar el escaneo temporalmente
             const qrDataToJson = JSON.parse(decodedText);
             await checkTicketStatus(qrDataToJson);
           }
@@ -80,10 +82,12 @@ export default function QrScann() {
         (error: any) => {
           console.warn(`Error de escaneo: ${error}`);
         }
-      );
+      ).catch((err: any) => {
+        console.error(`Error iniciando el escaneo: ${err}`);
+      });
 
       return () => {
-        qrCodeScanner.clear(); 
+        // No limpiar ni detener la cámara aquí para mantenerla activa
       };
     }
   }, [isProcessing]);
@@ -92,7 +96,7 @@ export default function QrScann() {
     <>
       <div className='w-full max-h-screen'>
         <div className='flex justify-center py-6 font-bold'>
-          {!isProcessing ? <p>Listo para scanear</p> : <Button onClick={() => qrCodeScannerRef.current?.resume()}> Escanear otro QR </Button>}
+          {!isProcessing ? <p>Listo para scanear</p> : <Button onClick={() => html5QrCodeRef.current?.resume()}> Escanear otro QR </Button>}
         </div>
         <div id="qr-reader" ref={qrCodeRegionRef}></div>
       </div>
