@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import Swal from 'sweetalert2';
 import { updateTicket } from '@/services/ticketsService';
 import { Backdrop, Button, CircularProgress } from '@mui/material';
@@ -28,15 +28,21 @@ export default function QrScann() {
         await Swal.fire({
           title: 'Entrada válida',
           icon: 'success',
-          timer: 1500,
+          timer: 2000,
           showConfirmButton: false,
+        }).then(()=>{
+          html5QrCodeRef.current?.resume(); 
+          setIsProcessing(false);
         });
       } else {
         await Swal.fire({
           title: ticketUpdated?.msg,
           icon: 'error',
-          timer: 1500,
+          timer: 2000,
           showConfirmButton: false,
+        }).then(()=>{
+          html5QrCodeRef.current?.resume(); 
+          setIsProcessing(false);
         });
       }
     } catch (error) {
@@ -45,12 +51,12 @@ export default function QrScann() {
       await Swal.fire({
         title: 'Error al escanear QR',
         icon: 'error',
-        timer: 1500,
+        timer: 2000,
         showConfirmButton: false,
+      }).then(()=>{
+        setIsProcessing(false);
+        html5QrCodeRef.current?.resume(); 
       });
-    } finally {
-      setIsProcessing(false);
-      html5QrCodeRef.current?.resume();  // Reanudar el escaneo
     }
   };
 
@@ -60,18 +66,17 @@ export default function QrScann() {
 
   useEffect(() => {
     if (qrCodeRegionRef.current) {
-      const html5QrCode = new Html5Qrcode("qr-reader");
+      const html5QrCode = new Html5QrcodeScanner(
+        'qr-reader', 
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
 
       html5QrCodeRef.current = html5QrCode;  // Guardar la referencia
 
       // Iniciar la cámara y el escaneo de QR
-      html5QrCode.start(
-        { facingMode: "environment" }, // Usar la cámara trasera
-        {
-          fps: 10,    // Fotogramas por segundo
-          qrbox: { width: 250, height: 250 }  // Área de escaneo
-        },
-        async (decodedText: string) => {
+      html5QrCode.render(
+        async (decodedText: string, decodedResult: any) => {
           if (!isProcessing) {
             setIsProcessing(true);
             html5QrCode.pause();  // Pausar el escaneo temporalmente
@@ -82,9 +87,7 @@ export default function QrScann() {
         (error: any) => {
           console.warn(`Error de escaneo: ${error}`);
         }
-      ).catch((err: any) => {
-        console.error(`Error iniciando el escaneo: ${err}`);
-      });
+      )
 
       return () => {
         // No limpiar ni detener la cámara aquí para mantenerla activa
