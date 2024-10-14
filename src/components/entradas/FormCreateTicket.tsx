@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useEffect, useState } from 'react'
-import { Autocomplete, Divider, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup, TextField } from '@mui/material'
-import { getEventsService } from '@/services/eventosService'
+import { Divider, FormControl, FormControlLabel, FormGroup, Radio, RadioGroup, TextField } from '@mui/material'
 import { createTicketService } from '@/services/ticketsService'
 import { LoadingButton } from '@mui/lab'
 import _ from 'lodash'
 import Swal from 'sweetalert2'
 import { useUser } from '@/context/UserContext'
-import { useRouter } from 'next/navigation'
 
 export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getTicketByEvent}: any) => {
     const { user } = useUser();
-    const router = useRouter();
-    const [eventList, setEventList] = useState<any>([])
     const [isLoading, setIsLoading] = useState(false)
     const [ticketPrice, setTicketPrice] = useState(0)
     const [formCreateTicket, setFormCreateTicket] = useState({
@@ -25,19 +21,6 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
     })
 
     const { evento, nombre, edad, telefono, sector } = formCreateTicket;
-
-    const getEvents = async () => {
-        const rep = await getEventsService()
-        const events = rep.events.map( event => ({
-            ...event,
-            label: event.name
-        })) 
-        setEventList(events)
-    }
-
-    useEffect(() => {
-      getEvents()
-    }, [])
 
     useEffect(() => {
         if (!_.isNull(eventSelected)) {
@@ -67,7 +50,6 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
             })
             setIsLoading(false)
             getTicketByEvent()
-            // router.push(`/entradas/${resp.ticketId}`)
         }
         setIsOpenCreateTicketForm(false)
         setIsLoading(false)

@@ -74,8 +74,7 @@ export const getTicketByIdService = async (id) => {
 
 export const updateTicket = async (ticket) => {
     try {
-        const { id, evento, ...ticketData } = ticket;
-        const ticketRef = doc(db, 'entradas', id);
+        const ticketRef = doc(db, 'entradas', ticket.id);
         const snapshot = await getDoc(ticketRef)
         if (snapshot.exists()) {
             const ticketResponse = { id: snapshot.id, ...snapshot.data() };

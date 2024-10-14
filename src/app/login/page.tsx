@@ -2,7 +2,7 @@
 'use client'
 import { auth } from "@/config/firebase/firebaseConfig"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
-import { Button, IconButton, InputAdornment, TextField } from "@mui/material"
+import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"

@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 import { getEventsService } from '@/services/eventosService';
-import { Autocomplete, Button, Dialog, DialogContent, FormGroup, IconButton, TextField, Tooltip } from '@mui/material';
+import { Autocomplete, Button, Dialog, DialogContent, IconButton, TextField, Tooltip } from '@mui/material';
 import _ from 'lodash';
 import { getTickesServiceByEvent } from '@/services/ticketsService';
 import { Ticket } from '@/interfaces/TicketInterface';
