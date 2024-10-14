@@ -6,7 +6,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode';
 import _ from 'lodash';
 import Swal from 'sweetalert2';
 import { updateTicket } from '@/services/ticketsService';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, Button, CircularProgress } from '@mui/material';
 
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
@@ -15,6 +15,10 @@ export default function QrScann() {
   const [isProcessing, setIsProcessing] = useState(false);  // Añadido estado para bloqueo
 
   const checkTicketStatus  = async (qrDataToJson:any) => {
+    if (isProcessing) {
+      return;
+    }
+    setIsProcessing(true)
     setOpen(true);
     try {
       const ticketUpdated = await updateTicket(qrDataToJson);
@@ -26,10 +30,6 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
-        setTimeout(() => {
-          setIsProcessing(false);
-          
-        }, 2000);
       } else {
         await Swal.fire({
           title: ticketUpdated?.msg,
@@ -37,9 +37,6 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
-        setTimeout(() => {
-          setIsProcessing(false);
-        }, 2000);
       }
     } catch (error) {
       setOpen(false);
@@ -50,9 +47,6 @@ export default function QrScann() {
         timer:1500,
         showConfirmButton: false,
       });
-      setTimeout(() => {
-        setIsProcessing(false);
-      }, 2000);
     }
   };
 
@@ -69,11 +63,11 @@ export default function QrScann() {
       );
 
       qrCodeScanner.render(
-        (decodedText: string, decodedResult: any) => {
+        async (decodedText: string, decodedResult: any) => {
           if (!isProcessing) {  // Solo procesar si no está bloqueado
+            setIsProcessing(true);
             const qrDataToJson = JSON.parse(decodedText);
-            setIsProcessing(true);  // Bloquear el escaneo mientras se procesa
-            checkTicketStatus(qrDataToJson); // Procesar los datos escaneados
+            await checkTicketStatus(qrDataToJson); // Procesar los datos escaneados
           }
         },
         (error: any) => {
@@ -92,7 +86,7 @@ export default function QrScann() {
     <>
       <div className='w-full max-h-screen'>
         <div className='flex justify-center py-6 font-bold'>
-          {!isProcessing ? <p>Listo para scanear</p> : <p>Espere...</p> }
+          {!isProcessing ? <p>Listo para scanear</p> : <Button onClick={() => setIsProcessing(false)}> Escanear otro QR </Button> }
 
         </div>
           <div id="qr-reader" ref={qrCodeRegionRef}></div>
