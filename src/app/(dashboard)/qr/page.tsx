@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import { useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { useEffect, useRef, useState } from 'react';
+import { Html5Qrcode, Html5QrcodeSupportedFormats, Html5QrcodeScanner } from 'html5-qrcode';
 import Swal from 'sweetalert2';
 import { updateTicket } from '@/services/ticketsService';
-import { Backdrop, Button, CircularProgress } from '@mui/material';
+import { Backdrop, Button, CircularProgress, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
   const html5QrCodeRef = useRef<any>(null); // Almacenar la referencia del escáner
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [cameraStarted, setCameraStarted] = useState(false); // Nuevo estado para controlar si la cámara está activa
+  const [cameraStarted, setCameraStarted] = useState(false);
+  const [cameras, setCameras] = useState<any[]>([]);  // Lista de cámaras disponibles
+  const [selectedCameraId, setSelectedCameraId] = useState<string>('');  // ID de la cámara seleccionada
 
   const checkTicketStatus = async (qrDataToJson: any) => {
     if (isProcessing) {
@@ -65,14 +67,14 @@ export default function QrScann() {
   };
 
   const startCamera = () => {
-    if (qrCodeRegionRef.current && !cameraStarted) {
-      const html5QrCode = new Html5Qrcode("qr-reader");
+    if (qrCodeRegionRef.current && selectedCameraId && !cameraStarted) {
+      const html5QrCode = new Html5Qrcode("qr-reader", { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE], verbose:false });
 
       html5QrCodeRef.current = html5QrCode;  // Guardar la referencia
 
-      // Iniciar la cámara y el escaneo de QR
+      // Iniciar la cámara seleccionada y el escaneo de QR
       html5QrCode.start(
-        { facingMode: "environment" }, // Usar la cámara trasera
+        { deviceId: { exact: selectedCameraId } }, // Usar la cámara seleccionada por el usuario
         {
           fps: 10,    // Fotogramas por segundo
           qrbox: { width: 250, height: 250 }  // Área de escaneo
@@ -89,7 +91,6 @@ export default function QrScann() {
           console.warn(`Error de escaneo: ${error}`);
         }
       ).catch((err: any) => {
-        setCameraStarted(false)
         console.error(`Error iniciando el escaneo: ${err}`);
       });
 
@@ -97,14 +98,52 @@ export default function QrScann() {
     }
   };
 
+  const loadCameras = () => {
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        setCameras(devices);  // Guardar la lista de cámaras disponibles
+        setSelectedCameraId(devices[0].id);  // Seleccionar la primera cámara como predeterminada
+      }
+    }).catch(err => {
+      console.error("Error obteniendo las cámaras: ", err);
+    });
+  };
+
+  useEffect(() => {
+    loadCameras();  // Cargar las cámaras cuando el componente se monta
+  }, []);
+
   return (
     <>
       <div className='w-full max-h-screen'>
         <div className='flex justify-center py-6 font-bold'>
           {!cameraStarted ? (
-            <Button variant="contained" onClick={startCamera}>
-              Activar Cámara para Escanear QR
-            </Button>
+            <>
+              <FormControl fullWidth>
+                <InputLabel id="select-camera-label">Seleccionar Cámara</InputLabel>
+                <Select
+                  labelId="select-camera-label"
+                  value={selectedCameraId}
+                  label="Seleccionar Cámara"
+                  onChange={(e) => setSelectedCameraId(e.target.value as string)}
+                >
+                  {cameras.map((camera) => (
+                    <MenuItem key={camera.id} value={camera.id}>
+                      {camera.label || `Cámara ${camera.id}`}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Button
+                variant="contained"
+                onClick={startCamera}
+                style={{ marginTop: '16px' }}
+                disabled={!selectedCameraId} // Deshabilitar si no hay cámara seleccionada
+              >
+                Activar Cámara para Escanear QR
+              </Button>
+            </>
           ) : (
             !isProcessing ? <p>Listo para escanear</p> : <p>Procesando...</p>
           )}
