@@ -14,11 +14,12 @@ export default function QrScann() {
 
   const [qrData, setQrData] = useState<Ticket|null>(null)
   const [open, setOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false); 
   
-  const checkTicketStatus  = async () => {
+  const checkTicketStatus  = async (qrDataToJson:any) => {
     setOpen(true);
     try {
-      const ticketUpdated = await updateTicket(qrData);
+      const ticketUpdated = await updateTicket(qrDataToJson);
       setOpen(false);
       if (ticketUpdated?.ok) {
         await Swal.fire({
@@ -45,6 +46,8 @@ export default function QrScann() {
         timer:1500,
         showConfirmButton: false,
       })
+    } finally {
+      setIsProcessing(false)
     }
   }
 
@@ -62,8 +65,13 @@ export default function QrScann() {
 
       qrCodeScanner.render(
         (decodedText: string, decodedResult: any) => {
-          const qrDataToJson = JSON.parse(decodedText)
-          setQrData(qrDataToJson)
+          console.log('-------decodedText----', decodedText);
+          if (!isProcessing) {
+            const qrDataToJson = JSON.parse(decodedText)
+            setIsProcessing(true); 
+            checkTicketStatus(qrDataToJson)
+            setQrData(qrDataToJson)
+          }
         },
         (error: any) => {
           console.warn(`Error de escaneo: ${error}`);
@@ -74,16 +82,8 @@ export default function QrScann() {
         qrCodeScanner.clear();
       };
     }
-  }, []);
+  }, [isProcessing]);
   
-
-  useEffect(() => {
-    if (!_.isNull(qrData)) {
-      checkTicketStatus()
-    }
-  }, [qrData])
-  
-
   return (
     <>
       <div className='w-full max-h-screen'>
