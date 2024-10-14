@@ -28,6 +28,7 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
+        setIsProcessing(false);
       } else {
         await Swal.fire({
           title: ticketUpdated?.msg,
@@ -35,6 +36,7 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
+        setIsProcessing(false);
       }
     } catch (error) {
       setOpen(false);
@@ -45,8 +47,7 @@ export default function QrScann() {
         timer:1500,
         showConfirmButton: false,
       });
-    } finally {
-      setIsProcessing(false);  // Desbloquear el escaneo cuando termine el procesamiento
+      setIsProcessing(false);
     }
   };
 
@@ -66,9 +67,8 @@ export default function QrScann() {
         (decodedText: string, decodedResult: any) => {
           if (!isProcessing) {  // Solo procesar si no está bloqueado
             const qrDataToJson = JSON.parse(decodedText);
-            checkTicketStatus(qrDataToJson);
-            setQrData(qrDataToJson);
             setIsProcessing(true);  // Bloquear el escaneo mientras se procesa
+            checkTicketStatus(qrDataToJson); // Procesar los datos escaneados
           }
         },
         (error: any) => {
@@ -77,11 +77,10 @@ export default function QrScann() {
       );
 
       return () => {
-        // Ya no detenemos el escáner aquí para evitar que la cámara se apague
-        // qrCodeScanner.clear(); 
+        qrCodeScanner.clear(); 
       };
     }
-  }, [isProcessing]);  // Dependencia de isProcessing para que solo permita escanear cuando está desbloqueado
+  }, []);  // Dependencia de isProcessing para que solo permita escanear cuando está desbloqueado
 
 
   return (
