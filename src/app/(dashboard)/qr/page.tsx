@@ -4,7 +4,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import _ from 'lodash';
-import { Ticket } from '@/interfaces/TicketInterface';
 import Swal from 'sweetalert2';
 import { updateTicket } from '@/services/ticketsService';
 import { Backdrop, CircularProgress } from '@mui/material';
@@ -12,7 +11,6 @@ import { Backdrop, CircularProgress } from '@mui/material';
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
 
-  const [qrData, setQrData] = useState<Ticket|null>(null);
   const [open, setOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);  // Añadido estado para bloqueo
 
@@ -28,7 +26,10 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
-        setIsProcessing(false);
+        setTimeout(() => {
+          setIsProcessing(false);
+          
+        }, 2000);
       } else {
         await Swal.fire({
           title: ticketUpdated?.msg,
@@ -36,7 +37,9 @@ export default function QrScann() {
           timer:1500,
           showConfirmButton: false,
         });
-        setIsProcessing(false);
+        setTimeout(() => {
+          setIsProcessing(false);
+        }, 2000);
       }
     } catch (error) {
       setOpen(false);
@@ -47,7 +50,9 @@ export default function QrScann() {
         timer:1500,
         showConfirmButton: false,
       });
-      setIsProcessing(false);
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 2000);
     }
   };
 
@@ -86,10 +91,11 @@ export default function QrScann() {
   return (
     <>
       <div className='w-full max-h-screen'>
+        <div className='flex justify-center py-6 font-bold'>
+          {!isProcessing ? <p>Listo para scanear</p> : <p>Espere...</p> }
+
+        </div>
           <div id="qr-reader" ref={qrCodeRegionRef}></div>
-          {!_.isNull(qrData) && (
-            <div>{qrData.cliente.nombre}</div>
-          )}
       </div>
       <Backdrop
         sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
