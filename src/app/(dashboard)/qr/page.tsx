@@ -12,10 +12,10 @@ import { Backdrop, CircularProgress } from '@mui/material';
 export default function QrScann() {
   const qrCodeRegionRef = useRef<HTMLDivElement>(null);
 
-  const [qrData, setQrData] = useState<Ticket|null>(null)
+  const [qrData, setQrData] = useState<Ticket|null>(null);
   const [open, setOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false); 
-  
+  const [isProcessing, setIsProcessing] = useState(false);  // Añadido estado para bloqueo
+
   const checkTicketStatus  = async (qrDataToJson:any) => {
     setOpen(true);
     try {
@@ -23,33 +23,32 @@ export default function QrScann() {
       setOpen(false);
       if (ticketUpdated?.ok) {
         await Swal.fire({
-          title:'Entrada valida',
+          title:'Entrada válida',
           icon:'success',
           timer:1500,
           showConfirmButton: false,
-        })
-        
-      }else{
+        });
+      } else {
         await Swal.fire({
           title: ticketUpdated?.msg,
           icon:'error',
           timer:1500,
           showConfirmButton: false,
-        })
+        });
       }
     } catch (error) {
       setOpen(false);
       console.log('error', error);
       await Swal.fire({
-        title:'Error al scanear qr',
+        title:'Error al escanear QR',
         icon:'error',
         timer:1500,
         showConfirmButton: false,
-      })
+      });
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);  // Desbloquear el escaneo cuando termine el procesamiento
     }
-  }
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -60,17 +59,16 @@ export default function QrScann() {
       const qrCodeScanner = new Html5QrcodeScanner(
         'qr-reader', 
         { fps: 10, qrbox: { width: 250, height: 250 } },
-        true
+        false  // El tercer argumento debe ser false para evitar que el escáner limpie la cámara
       );
 
       qrCodeScanner.render(
         (decodedText: string, decodedResult: any) => {
-          console.log('-------decodedText----', decodedText);
-          if (!isProcessing) {
-            const qrDataToJson = JSON.parse(decodedText)
-            setIsProcessing(true); 
-            checkTicketStatus(qrDataToJson)
-            setQrData(qrDataToJson)
+          if (!isProcessing) {  // Solo procesar si no está bloqueado
+            const qrDataToJson = JSON.parse(decodedText);
+            checkTicketStatus(qrDataToJson);
+            setQrData(qrDataToJson);
+            setIsProcessing(true);  // Bloquear el escaneo mientras se procesa
           }
         },
         (error: any) => {
@@ -79,18 +77,19 @@ export default function QrScann() {
       );
 
       return () => {
-        qrCodeScanner.clear();
+        // Ya no detenemos el escáner aquí para evitar que la cámara se apague
+        // qrCodeScanner.clear(); 
       };
     }
-  }, [isProcessing]);
-  
+  }, [isProcessing]);  // Dependencia de isProcessing para que solo permita escanear cuando está desbloqueado
+
+
   return (
     <>
       <div className='w-full max-h-screen'>
           <div id="qr-reader" ref={qrCodeRegionRef}></div>
           {!_.isNull(qrData) && (
             <div>{qrData.cliente.nombre}</div>
-
           )}
       </div>
       <Backdrop
@@ -101,5 +100,5 @@ export default function QrScann() {
         <CircularProgress color="inherit" />
       </Backdrop>
     </>
-);
+  );
 };
