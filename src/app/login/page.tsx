@@ -7,11 +7,13 @@ import { signInWithEmailAndPassword } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Cookies from 'js-cookie';
+import { LoadingButton } from "@mui/lab"
 
 
 export default function LoginPage() {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false)
+    const [isLoading, setisLoading] = useState(false)
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const [formLogin, setFormLogin] = useState({
         email:'',
@@ -29,14 +31,17 @@ export default function LoginPage() {
 
     const login = async (e:any) => {
         e.preventDefault()
+        setisLoading(true)
         try {
            const userCredential = await signInWithEmailAndPassword(auth, email, password);
            console.log('---userCredential---', userCredential);
            const token = await userCredential.user.getIdToken();
 
            Cookies.set('token', token, { expires: 1 });
+           setisLoading(false)
            router.push('/')
         } catch (error) {
+            setisLoading(false);
             console.log('error', error);
         }
     }
@@ -68,7 +73,7 @@ export default function LoginPage() {
                                 }
                             }}
                         />
-                        <Button type="submit" sx={{marginTop:'40px', marginBottom:'20px'}} variant="contained">Login</Button>
+                        <LoadingButton loading={isLoading} type="submit" sx={{marginTop:'40px', marginBottom:'20px'}} variant="contained">Login</LoadingButton>
                     </form>
                 </div>
             </div>

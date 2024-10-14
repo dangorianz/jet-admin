@@ -1,10 +1,9 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 import { db } from "../config/firebase/firebaseConfig"
 import moment from "moment";
 
 export const createTicketService = async (payload, user) => {
-    // 4SCg8Y2PMduCn3qlXaY9
 
     const body = {
         evento: payload.evento,
@@ -70,5 +69,33 @@ export const getTicketByIdService = async (id) => {
     } catch (error) {
         console.error('Error al obtener los documento: ', error);
         return null;
+    }
+}
+
+export const updateTicket = async (ticket) => {
+    try {
+        const { id, evento, ...ticketData } = ticket;
+        const ticketRef = doc(db, 'entradas', id);
+        const snapshot = await getDoc(ticketRef)
+        if (snapshot.exists()) {
+            const ticketResponse = { id: snapshot.id, ...snapshot.data() };
+
+            if (ticketResponse.estado === 'activo') {
+                await updateDoc(ticketRef, {
+                    estado: 'usado'
+                })
+                return { ok: true, msg:''};
+            }
+            if (ticketResponse.estado === 'usado') {
+                return { ok: false, msg:'Entrada ya utilizada'}
+            }
+        }else{
+            return { ok: false, msg:'Esta entrada no existe' };
+        }
+
+        
+    } catch (error) {
+        console.error('Error al actualizar entrada: ', error);
+        return { ok: false, msg:'Error al verificar entrada'};
     }
 }
