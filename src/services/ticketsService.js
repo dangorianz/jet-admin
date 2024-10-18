@@ -62,7 +62,12 @@ export const getTicketByIdService = async (id) => {
         const ticketRef = doc(db, 'entradas', id);
         const snapshot = await getDoc(ticketRef)
         if (snapshot.exists()) {
-            return { id: snapshot.id, ...snapshot.data() };
+            const ticket = { id: snapshot.id, ...snapshot.data() };
+            const eventRef = doc(db,'eventos', ticket?.evento)
+            const snapshotEvent = await getDoc(eventRef)
+            const evento = { id: snapshotEvent.id, ...snapshotEvent.data()}
+
+            return {...ticket, artImageUrl: evento.artImageUrl};
         } 
         console.log('No se encontró el documento');
         return null;
@@ -74,7 +79,7 @@ export const getTicketByIdService = async (id) => {
 
 export const updateTicket = async (ticket) => {
     try {
-        const ticketRef = doc(db, 'entradas', ticket.id);
+        const ticketRef = doc(db, 'entradas', ticket);
         const snapshot = await getDoc(ticketRef)
         if (snapshot.exists()) {
             const ticketResponse = { id: snapshot.id, ...snapshot.data() };

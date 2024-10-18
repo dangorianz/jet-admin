@@ -7,6 +7,7 @@ export interface Ticket {
     precio:   string;
     usuario:  Usuario;
     sector:   string;
+    artImageUrl?: string;
 }
 
 export interface Cliente {

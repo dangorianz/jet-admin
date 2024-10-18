@@ -1,9 +1,9 @@
 'use client'
 import React, { useRef } from 'react'
 import { Ticket } from '@/interfaces/TicketInterface'
-
 import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '@mui/material';
+import jsPDF from 'jspdf';
 
 interface GenerateQrProps {
     ticket: Ticket;
@@ -11,9 +11,9 @@ interface GenerateQrProps {
 
 export const GenerateQr = ({ ticket }: GenerateQrProps) => {
     const svgRef = useRef<SVGSVGElement>(null);
-    const qrValue = JSON.stringify(ticket);
+    const qrValue = ticket.id;
 
-    const downloadQRCode = () => {
+    const downloadPDF = () => {
         const svg = svgRef.current;
 
         if (svg) {
@@ -25,28 +25,41 @@ export const GenerateQr = ({ ticket }: GenerateQrProps) => {
             img.src = "data:image/svg+xml;base64," + btoa(svgData);
 
             img.onload = function () {
-                const scaleFactor = 10; // Puedes ajustar este valor para más calidad (mayor valor = mayor calidad)
-                const marginSize = 50; 
-                canvas.width = img.width * scaleFactor + marginSize * 2;
-                canvas.height = img.height * scaleFactor + marginSize * 2;
+                // Dibujamos el QR en el canvas para obtener la imagen en formato PNG
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx?.drawImage(img, 0, 0);
+                const qrPng = canvas.toDataURL("image/png");
 
-                // Dibujamos la imagen en el canvas con mayor calidad
+                // Crear un nuevo documento PDF
+                const doc = new jsPDF({
+                    orientation: "portrait", // vertical
+                    unit: "pt", // puntos (72 por pulgada)
+                    format: "letter" // tamaño carta
+                });
 
-                ctx!.fillStyle = "#FFFFFF";
-                ctx!.fillRect(0, 0, canvas.width, canvas.height);
+                // Establecemos algunas coordenadas iniciales
+                const marginX = 50;
+                const marginY = 50;
 
-                ctx?.scale(scaleFactor, scaleFactor);
-                ctx?.drawImage(img, marginSize / scaleFactor, marginSize / scaleFactor);
-                const pngFile = canvas.toDataURL("image/png", 1.0);
+                // Añadir el nombre del cliente
+                doc.setFontSize(20);
+                doc.text(`Cliente: ${ticket.cliente.nombre}`, marginX, marginY);
 
-                const downloadLink = document.createElement("a");
-                downloadLink.href = pngFile;
-                downloadLink.download = `QR-${ticket.cliente.nombre}.png`;
-                downloadLink.click();
+                // Añadir otros detalles del cliente
+                doc.setFontSize(12);
+                doc.text(`Teléfono: ${ticket.cliente.telefono}`, marginX, marginY + 20);
+                doc.text(`Edad: ${ticket.cliente.edad}`, marginX, marginY + 40);
+
+                // Añadir el QR en el PDF (lo añadimos 100px más abajo del último texto)
+                const qrSize = 150;
+                doc.addImage(qrPng, "PNG", marginX, marginY + 60, qrSize, qrSize);
+
+                // Descargar el PDF
+                doc.save(`Entrada-${ticket.cliente.nombre}.pdf`);
             };
         }
     };
-
 
     return (
         <div className='w-full'>
@@ -54,12 +67,11 @@ export const GenerateQr = ({ ticket }: GenerateQrProps) => {
                 <h2 className='mb-5 font-bold text-2xl text-amber-900'>{ticket.cliente.nombre}</h2>
                 <QRCodeSVG value={qrValue} size={256} ref={svgRef}/>
                 <Button
-                    sx={{marginY: 2 }}
-                    onClick={downloadQRCode}>
-                    Descargar QR
+                    sx={{ marginY: 2 }}
+                    onClick={downloadPDF}>
+                    Descargar PDF
                 </Button>
-                
             </div>
         </div>
-    )   
-}
+    );
+};

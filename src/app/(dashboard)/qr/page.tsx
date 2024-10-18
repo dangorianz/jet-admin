@@ -83,7 +83,7 @@ export default function QrScann() {
           if (!isProcessing) {
             setIsProcessing(true);
             html5QrCode.pause();  // Pausar el escaneo temporalmente
-            const qrDataToJson = JSON.parse(decodedText);
+            const qrDataToJson = decodedText;
             await checkTicketStatus(qrDataToJson);
           }
         },
