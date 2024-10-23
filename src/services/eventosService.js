@@ -39,9 +39,12 @@ export const createEventService = async (payload, user) => {
         date: moment(payload.date).format('DD/MM/YYYY'),
         name: payload.name,
         sectores: {
-            general: payload.general,
-            vip: payload.vip,
-            supervip: payload.supervip
+            camel: payload.camel,
+            cbn: payload.cbn,
+            parrales: payload.parrales,
+            experiencia: payload.experiencia,
+            mambo: payload.mambo,
+            digestan: payload.digestan
         },
         artImageUrl: imageURL, 
         estado: 'activo',

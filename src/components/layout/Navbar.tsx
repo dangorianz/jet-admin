@@ -4,7 +4,7 @@ import { Divider, IconButton, Tooltip } from '@mui/material'
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+// import AssessmentIcon from '@mui/icons-material/Assessment';
 import QrCodeIcon from '@mui/icons-material/QrCode';
 import EventIcon from '@mui/icons-material/Event';
 import Image from 'next/image';
@@ -21,7 +21,7 @@ export const Navbar = () => {
     { id: "nav-2", icon: <ConfirmationNumberIcon className='text-gray-800'/>, title: 'Entradas', path: '/entradas' },
     { id: "nav-3", icon: <EventIcon className='text-gray-800'/>, title: 'Eventos', path: '/eventos' },
     { id: "nav-4", icon: <PeopleAltIcon className='text-gray-800'/>, title: 'Usuarios', path: '/usuarios' },
-    { id: "nav-5", icon: <AssessmentIcon className='text-gray-800'/>, title: 'Reportes', path: '/reportes' },
+    // { id: "nav-5", icon: <AssessmentIcon className='text-gray-800'/>, title: 'Reportes', path: '/reportes' },
     { id: "nav-6", icon: <QrCodeIcon className='text-gray-800'/>, title: 'Qr Scan', path: '/qr' },
 ];
   

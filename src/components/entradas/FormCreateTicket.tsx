@@ -17,7 +17,7 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
         nombre: '',
         edad: 0,
         telefono: 0,
-        sector: 'general'
+        sector: 'camel'
     })
 
     const { evento, nombre, edad, telefono, sector } = formCreateTicket;
@@ -101,10 +101,18 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
                 <Divider sx={{marginTop:1, marginBottom: 2}}/>
                 <div className='flex flex-col justify-center items-center'>
                     <p className='w-full'>Selecciona el sector</p>
-                    <RadioGroup row defaultValue="general" name='sector' value={sector} onChange={onChangeFormTickets}>
-                        <FormControlLabel value="general" control={<Radio />} label="General" />
-                        <FormControlLabel value="vip" control={<Radio />} label="VIP" />
-                        <FormControlLabel value="supervip" control={<Radio />} label="Super VIP" />
+                    <RadioGroup row defaultValue="camel" name='sector' value={sector} onChange={onChangeFormTickets}>
+                        <div className=' flex w-full'>
+                            <FormControlLabel sx={{flex:'1'}} value="camel" control={<Radio />} label="Camel" />
+                            <FormControlLabel sx={{flex:'1'}} value="cbn" control={<Radio />} label="CBN" />
+                            <FormControlLabel sx={{flex:'1'}} value="parrales" control={<Radio />} label="Parrales" />
+
+                        </div>
+                        <div className='w-full flex'>
+                            <FormControlLabel sx={{flex:'1'}} value="experiencia" control={<Radio />} label="Experiencia" />
+                            <FormControlLabel sx={{flex:'1'}} value="mambo" control={<Radio />} label="Mambo" />
+                            <FormControlLabel sx={{flex:'1'}} value="digestan" control={<Radio />} label="Digestan" />
+                        </div>
                     </RadioGroup>
                 </div>
                 <p className='text-end text-2xl font-bold mt-5'>Precio: <span className='font-normal ml-5'>{ticketPrice} Bs.</span></p>

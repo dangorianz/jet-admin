@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useState } from 'react'
-import { FormControl, FormGroup, TextField } from '@mui/material'
+import { FormControl, FormGroup, InputAdornment, TextField } from '@mui/material'
 import {LoadingButton} from '@mui/lab';
 import {createEventService} from '@/services/eventosService'
 import _ from 'lodash'
@@ -16,12 +16,15 @@ export const FormCreateEvent = () => {
     const [formCreateEvent, setFormCreateEvent] = useState({
         name: '',
         date: '',
-        general: 0,
-        vip: 0,
-        supervip: 0
+        camel: 0,
+        cbn: 0,
+        parrales: 0,
+        experiencia: 0,
+        mambo: 0,
+        digestan:0
     })
 
-    const { name, date, general, vip, supervip } = formCreateEvent
+    const { name, date, camel, cbn, parrales, experiencia, mambo, digestan} = formCreateEvent
 
     const onChangeForm = ( e: any ) => {
         setFormCreateEvent({
@@ -63,11 +66,82 @@ export const FormCreateEvent = () => {
                 </FormGroup>
                 <br />
                 <FormGroup>
-                    <h3 className='font-medium mb-2'>Precios del evento</h3>
-                    <div>
-                        <TextField onChange={onChangeForm} name='general' value={general} placeholder='precio General' label="General" type='number'/>
-                        <TextField onChange={onChangeForm} name='vip' value={vip} sx={{marginX:'20px'}} placeholder='precio VIP' label="VIP" type='number'/>
-                        <TextField onChange={onChangeForm} name='supervip' value={supervip} placeholder='precio Super VIP' label="Super VIP" type='number'/>
+                    <h3 className='font-medium mb-2'>Precios por sector</h3>
+                    <div className='flex flex-col '>
+                        <div className='flex justify-evenly'>
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='camel' value={camel} placeholder='Camel' label="Camel" type='number'        
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='cbn' value={cbn} placeholder='CBN' label="CBN" type='number'
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+                        </div>
+                        <div className='flex justify-evenly'>
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='parrales' value={parrales} placeholder='Parrales' label="Parrales" type='number'
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='experiencia' value={experiencia} placeholder='Experiencia' label="Experiencia" type='number'
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+
+                        </div>
+                        <div className='flex justify-evenly'>
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='mambo' value={mambo} placeholder='Mambo' label="Mambo" type='number'
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+                            <TextField sx={{marginY:'10px'}} onChange={onChangeForm} variant='standard' name='digestan' value={digestan} placeholder='Digestan' label="Digestan" type='number'
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                        <InputAdornment position="start">
+                                            <p className='font-semibold text-black'>Bs.</p>
+                                        </InputAdornment>
+                                        ),
+                                    },
+                                }}
+                            />
+
+                        </div>
                     </div>
                 </FormGroup>
                 <br />

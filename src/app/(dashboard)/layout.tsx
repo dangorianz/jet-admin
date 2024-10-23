@@ -1,3 +1,4 @@
+import { DrawerComponent } from "@/components/layout/Drawer";
 import { Navbar } from "@/components/layout/Navbar";
 import type { Metadata } from "next";
 
@@ -15,8 +16,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="flex h-screen">
-            <Navbar />
+        <main className="flex h-screen flex-col sm:flex-row">
+            <div className="hidden sm:block">
+              <Navbar />
+            </div>
+            <div className="block sm:hidden bg-slate-100">
+              <DrawerComponent/>
+            </div>
             <div className="flex-1 bg-slate-100 overflow-y-scroll overflow-hidden">
                 {children}
             </div>
