@@ -21,16 +21,25 @@ export const FormCreateEvent = () => {
         parrales: 0,
         experiencia: 0,
         mambo: 0,
-        digestan:0
+        digestan:0,
+        artImage: null
     })
 
     const { name, date, camel, cbn, parrales, experiencia, mambo, digestan} = formCreateEvent
 
     const onChangeForm = ( e: any ) => {
-        setFormCreateEvent({
-            ...formCreateEvent,
-            [e.target.name]: e.target.value
-        })
+        if (e.target.name ==='artImage') {
+            setFormCreateEvent({
+                ...formCreateEvent,
+                artImage: e.target.files[0]
+            })
+        }else {
+            setFormCreateEvent({
+                ...formCreateEvent,
+                [e.target.name]: e.target.value
+            })
+
+        }
     }
 
     const createEvent = async () => {
@@ -143,6 +152,11 @@ export const FormCreateEvent = () => {
 
                         </div>
                     </div>
+                </FormGroup>
+                <br />
+                <FormGroup>
+                    <h3 className='font-medium mb-2'>Arte del evento</h3>
+                    <input type="file" name="artImage" onChange={onChangeForm} accept="image/*" />
                 </FormGroup>
                 <br />
                 <FormGroup>

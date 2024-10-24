@@ -7,9 +7,11 @@ import jsPDF from 'jspdf';
 
 interface GenerateQrProps {
     ticket: Ticket;
+    qrSize: number;
+    downloadButton: boolean
 }
 
-export const GenerateQr = ({ ticket }: GenerateQrProps) => {
+export const GenerateQr = ({ ticket, qrSize, downloadButton }: GenerateQrProps) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const qrValue = ticket.id;
 
@@ -64,13 +66,15 @@ export const GenerateQr = ({ ticket }: GenerateQrProps) => {
     return (
         <div className='w-full'>
             <div className='flex justify-center flex-col items-center my-5'>
-                <h2 className='mb-5 font-bold text-2xl text-amber-900'>{ticket.cliente.nombre}</h2>
-                <QRCodeSVG value={qrValue} size={256} ref={svgRef}/>
-                <Button
-                    sx={{ marginY: 2 }}
-                    onClick={downloadPDF}>
-                    Descargar PDF
-                </Button>
+               
+                <QRCodeSVG value={qrValue} size={qrSize} ref={svgRef}/>
+                {downloadButton &&
+                    <Button
+                        sx={{ marginY: 2 }}
+                        onClick={downloadPDF}>
+                        Descargar PDF
+                    </Button>
+                }
             </div>
         </div>
     );
