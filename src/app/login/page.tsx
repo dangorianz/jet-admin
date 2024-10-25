@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import { auth } from "@/config/firebase/firebaseConfig"
+import { auth, db } from "@/config/firebase/firebaseConfig"
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { IconButton, InputAdornment, TextField } from "@mui/material"
 import { signInWithEmailAndPassword } from "firebase/auth"
@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Cookies from 'js-cookie';
 import { LoadingButton } from "@mui/lab"
+import { doc, getDoc } from "firebase/firestore"
 
 
 export default function LoginPage() {
@@ -38,8 +39,24 @@ export default function LoginPage() {
            const token = await userCredential.user.getIdToken();
 
            Cookies.set('token', token, { expires: 1 });
-           setisLoading(false)
-           router.push('/')
+
+           const uid = userCredential.user.uid;
+           const userDocRef = doc(db, "users", uid);
+           const userDocSnap = await getDoc(userDocRef);
+           if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                console.log('Datos del usuario:', userData);
+                
+                const userRole = userData.role;
+                Cookies.set('role', userRole, { expires: 1 }); 
+                
+            
+                router.push('/');
+            } else {
+                console.error("No se encontró el documento del usuario en Firestore");
+            }
+
+            setisLoading(false);
         } catch (error) {
             setisLoading(false);
             console.log('error', error);
