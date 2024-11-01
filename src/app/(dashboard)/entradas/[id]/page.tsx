@@ -18,7 +18,7 @@ export default async function  TicketPage({ params }: Props) {
     
     return (
         <div className="p-8">
-            <h1 className="text-3xl font-bold flex  items-center"> <span className="mr-5"> <ButtonBack/> </span> Detalle entrada: <span className="text-amber-900">{id}</span> </h1>
+            <h1 className="text-3xl font-bold flex  items-center"> <span className="mr-5"> <ButtonBack/> </span> Detalle entrada: <span className="text-amber-900"> {id}</span> </h1>
             <div className="my-5 w-fit rounded-lg shadow-lg">
                 {!_.isNull(resp) &&
                     <div className="flex">
@@ -28,12 +28,6 @@ export default async function  TicketPage({ params }: Props) {
                             <div className="">
                                 <p>
                                     <span className="font-bold">Nombre:</span> {resp.cliente.nombre}
-                                </p>
-                                <p>
-                                    <span className="font-bold">Telefono:</span>  {resp.cliente.telefono}
-                                </p>
-                                <p>
-                                    <span className="font-bold">Edad:</span>  {resp.cliente.edad}
                                 </p>
                             </div>
 

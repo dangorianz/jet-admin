@@ -44,10 +44,6 @@ export const ArtEvent = ({resp}:any) => {
 
             pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
             pdf.save(`${resp.cliente.nombre}.pdf`);
-            // const link = document.createElement('a');
-            // link.download = 'ticket-image.png';
-            // link.href = canvas.toDataURL('image/png');
-            // link.click();
             setIsDownloading(false);
         } catch (error) {
             console.error('Error al capturar la imagen:', error);
@@ -64,13 +60,20 @@ export const ArtEvent = ({resp}:any) => {
                 </div>
                 <div className="absolute bottom-[140px] left-[60px] max-w-[280px] w-[280px] text-sm">
                     <p className='text-center text-base pb-2'>
-                        <span className='font-bold uppercase'>{resp.sector} ( {resp.precio}.00 Bs.)</span>
+                        {resp?.sector
+                            ?<span className='font-bold uppercase'>{resp.sector} ( {resp.precio}.00 Bs.)</span>
+                            :<span className='font-bold'>INVITADO </span>
+                        }
+                       
                     </p>
                     <p>
                         <span className='font-bold'>nombre: </span>{resp.cliente.nombre}
                     </p>
                     <p className=''>
-                        <span className='font-bold'>sector: </span> <span className='capitalize'>{resp.sector}</span>
+                        {resp?.sector
+                            ?<><span className='font-bold'>sector: </span> <span className='capitalize'>{resp?.sector}</span> <span className='font-bold ml-3'>Mesa:</span> <span>{resp?.mesa} </span></> 
+                            :<span className='font-bold'>INVITADO </span>
+                        }
                     </p>
 
                     <p className='text-center font-bold mt-2'>
