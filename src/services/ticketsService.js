@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where, writeBatch } from "firebase/firestore";
 
 import { db } from "../config/firebase/firebaseConfig"
 import moment from "moment";
@@ -9,9 +9,7 @@ export const createTicketService = async (payload, user) => {
         evento: payload.evento,
         precio: payload.precio,
         cliente: {
-            nombre: payload.nombre,
-            edad: payload.edad,
-            telefono: payload.telefono
+            nombre: payload.nombre
         },
         usuario: {
             id: user?.uid,
@@ -20,7 +18,8 @@ export const createTicketService = async (payload, user) => {
         },
         sector: payload.sector,
         estado:'activo',
-        createAt: moment().format('DD/MM/YYYY hh:mm:ss')
+        createAt: moment().format('DD/MM/YYYY hh:mm:ss'),
+        mesa: payload?.mesa
     }
     try {
         const docRef = await addDoc(collection(db, 'entradas'), body)
@@ -101,5 +100,25 @@ export const updateTicket = async (ticket) => {
     } catch (error) {
         console.error('Error al actualizar entrada: ', error);
         return { ok: false, msg:'Error al verificar entrada'};
+    }
+}
+
+export const bulkCreateTicketService = async (payload) => {
+    
+    const batch = writeBatch(db);
+    const entradasRef = collection(db,'entradas')
+
+    payload.forEach(item => {
+        const newTicketRef = doc(entradasRef); // Creamos una referencia de documento única para cada ticket
+        batch.set(newTicketRef, item); // Añadir cada documento al batch directamente
+    });
+
+    try {
+        await batch.commit(); // Ejecutar el batch de operaciones
+        console.log('Todos los documentos se han escrito correctamente');
+        return { ok: true };
+    } catch (error) {
+        console.error('Error al crear los documentos en batch: ', error);
+        return { ok: false };
     }
 }

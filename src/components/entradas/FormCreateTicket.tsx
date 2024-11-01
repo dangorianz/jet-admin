@@ -15,12 +15,11 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
     const [formCreateTicket, setFormCreateTicket] = useState({
         evento: eventSelected.id,
         nombre: '',
-        edad: 0,
-        telefono: 0,
-        sector: 'camel'
+        sector: '',
+        mesa: ''
     })
 
-    const { evento, nombre, edad, telefono, sector } = formCreateTicket;
+    const { evento, nombre, sector, mesa } = formCreateTicket;
 
     useEffect(() => {
         if (!_.isNull(eventSelected)) {
@@ -56,7 +55,7 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
 
     }
     
-    const createButtonDisabled = _.isEmpty(evento) || _.isEmpty(nombre) || _.isEmpty(edad) || _.isEqual(edad.toString(), '0') || _.isEmpty(telefono) || _.isEqual(telefono.toString(), '0')
+    const createButtonDisabled = _.isEmpty(evento) || _.isEmpty(nombre)
     
   return (
     <FormControl fullWidth>
@@ -78,25 +77,6 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
                     <TextField name='nombre' onChange={onChangeFormTickets} value={nombre} size='small' fullWidth id='my-input'  placeholder='Nombre del cliente' type='text'/>
                 </FormGroup>
                 
-                <div className='flex justify-between mt-3'>
-                    <div>
-                        <h3 className='font-medium mb-2'>Edad</h3>
-                        <TextField name='edad' value={edad} onChange={onChangeFormTickets} size='small' placeholder='Edad' type='number' 
-                            onInput={(e:any) => {
-                                e.target.value = e.target.value < 0 ? 0 : e.target.value;
-                            }}
-                        />
-                    </div>
-                    <div>
-                        <h3 className='font-medium mb-2'>Telefono</h3>
-                        <TextField size='small' value={telefono} name='telefono' onChange={onChangeFormTickets} placeholder='Telefono' type='number'
-                            onInput={(e:any) => {
-                                e.target.value = e.target.value < 0 ? 0 : e.target.value;
-                            }}
-                        />
-
-                    </div>
-                </div>
                 <p className='text-center font-bold text-xl mt-5'>Sector</p>
                 <Divider sx={{marginTop:1, marginBottom: 2}}/>
                 <div className='flex flex-col justify-center items-center'>
@@ -114,6 +94,11 @@ export const FormCreateTicket = ({eventSelected, setIsOpenCreateTicketForm, getT
                             <FormControlLabel sx={{flex:'1'}} value="digestan" control={<Radio />} label="Digestan" />
                         </div>
                     </RadioGroup>
+                </div>
+                <div className='w-[300px]'>
+                    <h3 className='font-medium my-2'>Mesa</h3>
+                    <TextField name='mesa' onChange={onChangeFormTickets} value={mesa} size='small' fullWidth id='my-input'  placeholder='Mesa' type='text'/>
+
                 </div>
                 <p className='text-end text-2xl font-bold mt-5'>Precio: <span className='font-normal ml-5'>{ticketPrice} Bs.</span></p>
                 <Divider/>
