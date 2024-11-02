@@ -10,10 +10,12 @@ const UserContext = createContext<any>(null);
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<any>(null);
     const [role, setRole] = useState<string | null>(null); 
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         // Escuchar cambios en el estado de autenticación de Firebase
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+            setLoading(true)
             if (currentUser) {
                 setUser(currentUser);
                 const userDocRef = doc(db, "users", currentUser.uid);
@@ -28,13 +30,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 setUser(null);
                 setRole(null); 
             }
+            setLoading(false);
         });
 
         return () => unsubscribe();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, role }}>
+        <UserContext.Provider value={{ user, role, loading }}>
             {children}
         </UserContext.Provider>
     );

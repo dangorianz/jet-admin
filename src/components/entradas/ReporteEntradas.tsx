@@ -25,6 +25,7 @@ export const ReporteEntradas = () => {
     const router = useRouter();
     const [eventList, setEventList] = useState<any>([])
     const [ticketList, setTicketList] = useState<GridRowsProp>([])
+    const [filterTickets, setFilterTickets] = useState<GridRowsProp>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isEventLoading, setIsEventLoading] = useState<boolean>(false)
     const [eventSelected, setEventSelected] = useState<any>(null)
@@ -32,6 +33,7 @@ export const ReporteEntradas = () => {
     const [isExcelDialogOpen, setIsExcelDialogOpen] = useState(false)
     const [urls, setUrls] = useState([])
     const [generandoEntradas, setGenerandoEntradas] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const getEvents = async () => {
         setIsEventLoading(true)
@@ -136,6 +138,11 @@ export const ReporteEntradas = () => {
         }
     }
     
+    const onchangeTermSearch = (e:any) => {
+        setSearchTerm(e.target.value)
+        const filterTickets = ticketList.filter( ticket => ticket.cliente.toLowerCase().includes(e.target.value))
+        setFilterTickets(filterTickets);
+    }
 
     return (
         <div>
@@ -168,12 +175,20 @@ export const ReporteEntradas = () => {
 
                 </>
             )}
+            <TextField
+                label="Buscar por nombre de cliente"
+                variant="outlined"
+                name='searchTerm'
+                value={searchTerm}
+                onChange={onchangeTermSearch}
+                sx={{ mb: 2, width: '300px', bgcolor:'white' }}
+            />
             <div className='bg-white'>
                 <DataGrid   
                     autoHeight
                     rowSelection={false}
                     loading={isLoading}
-                    rows={ticketList}
+                    rows={ _.isEmpty(searchTerm) ? ticketList : filterTickets}
                     columns={columns}
                 /> 
 
@@ -186,7 +201,7 @@ export const ReporteEntradas = () => {
 
             <Dialog onClose={() => setIsExcelDialogOpen(false)} open={isExcelDialogOpen}>
                 <DialogContent sx={{minHeight:'300px'}}>
-                    <ExcelUploader evento={eventSelected}/>
+                    <ExcelUploader evento={eventSelected} setIsExcelDialogOpen={setIsExcelDialogOpen}/>
                 </DialogContent>
             </Dialog>
         </div>

@@ -80,7 +80,7 @@ export const FormCreateUser = ({ setIsOpenCreateUserForm }: any) => {
                     <MenuItem value={'administrador'}>Administrador</MenuItem>
                     <MenuItem value={'socio'}>Socio</MenuItem>
                     <MenuItem value={'colaborador'}>Colaborador</MenuItem>
-                    <MenuItem value={'portero'}>Guardia</MenuItem>
+                    <MenuItem value={'portero'}>Portero</MenuItem>
                 </Select>
             </FormGroup>
             <FormGroup>

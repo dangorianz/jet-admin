@@ -47,6 +47,7 @@ export const createEventService = async (payload, user) => {
             nombre: user?.displayName || '',
             email: user?.email,
         },
+        urls:[],
         createAt: moment().format('DD/MM/YYYY hh:mm:ss')
     }
     try {
