@@ -38,8 +38,8 @@ export const ExcelUploader = ({evento, setIsExcelDialogOpen}: any) => {
       const filteredData = jsonData
         .slice(1)
         .map((row) => ({
-          evento: evento.id,
-          precio: evento.sectores[row[sectorIndex].trim().toLowerCase()],
+          evento: evento?.id,
+          precio: evento?.sectores[row[sectorIndex]?.trim()?.toLowerCase()] || '',
           cliente: {
             nombre: row[nameIndex] || ''
           },
@@ -48,12 +48,12 @@ export const ExcelUploader = ({evento, setIsExcelDialogOpen}: any) => {
             nombre: user?.displayName || '',
             email: user?.email,
           },
-          sector: row[sectorIndex].trim().toLowerCase() || '',
+          sector: row[sectorIndex]?.trim()?.toLowerCase() || '',
           estado:'activo',
           createAt: moment().format('DD/MM/YYYY hh:mm:ss'),
           mesa: row[mesaIndex] || '',
         }))
-        .filter((row) => row.cliente.nombre.trim() !== '');
+        .filter((row) => row?.cliente?.nombre?.trim() !== '');
 
       setExcelData(filteredData);
     };
