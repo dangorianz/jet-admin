@@ -1,16 +1,24 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { auth } from "@/config/firebase/firebaseConfig"
+import { signOut } from "firebase/auth";
 
 export function middleware(req: NextRequest) {
     const token = req.cookies.get('token')?.value;
+    const role = req.cookies.get('role')?.value;
     const publicPaths = ['/login'];
-
+    const allowedPathsForPortero = ['/', '/qr'];
     if (publicPaths.includes(req.nextUrl.pathname)) {
         return NextResponse.next();
     }
 
     if (!token) {
+        signOut(auth)
         return NextResponse.redirect(new URL('/login', req.url));
+    }
+    //Validar las rutas segun el role
+    if (role === 'portero' && !allowedPathsForPortero.includes(req.nextUrl.pathname)) {
+        return NextResponse.redirect(new URL('/', req.url)); 
     }
 
     // Llamar a la API interna para verificar el token
