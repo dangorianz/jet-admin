@@ -28,7 +28,7 @@ export const Navbar = () => {
     { id: "nav-5", icon: <QrCodeIcon className='text-gray-800' />, title: 'Qr Scan', path: '/qr' }
   ];
   const logoutItem = { id: "nav-6", icon: <LogoutIcon className='text-gray-800' />, title: 'Logout', path: '/login' }
-  navbarItems = role === "portero" ? navbarItems.splice(4, 1) : navbarItems
+  if (role === "portero") navbarItems = navbarItems.splice(4, 1)
   const logoutUser = () => {
     Cookies.remove('token')
     Cookies.remove('role')
